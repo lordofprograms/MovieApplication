@@ -1,6 +1,5 @@
 package com.borisruzanov.popularmovies.adapters;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,12 +10,10 @@ import android.widget.ImageView;
 
 import com.borisruzanov.popularmovies.OnItemClickListener;
 import com.borisruzanov.popularmovies.R;
-import com.borisruzanov.popularmovies.api.BasePojo;
+import com.borisruzanov.popularmovies.model.BasePojo;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-
-import jp.wasabeef.picasso.transformations.CropTransformation;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder> {
 

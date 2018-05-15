@@ -1,4 +1,4 @@
-package com.borisruzanov.popularmovies.api;
+package com.borisruzanov.popularmovies.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

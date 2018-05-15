@@ -15,7 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.borisruzanov.popularmovies.adapters.ListAdapter;
-import com.borisruzanov.popularmovies.api.BasePojo;
+import com.borisruzanov.popularmovies.model.BasePojo;
 import com.borisruzanov.popularmovies.api.RetrofitClient;
 
 import java.util.ArrayList;
@@ -32,9 +32,11 @@ public class ListFragment extends Fragment implements ListAdapter.ItemClickListe
      */
     RecyclerView recyclerView;
     View view;
-    List<BasePojo.Result> list;
-    ListAdapter listAdapter;
     Toolbar toolbar;
+    List<BasePojo.Result> moviesList;
+ListAdapter listAdapter;
+
+
 
 
     public ListFragment() {
@@ -48,10 +50,12 @@ public class ListFragment extends Fragment implements ListAdapter.ItemClickListe
          * Main Initialization
          */
         view = inflater.inflate(R.layout.fragment_list, container, false);
+
+        moviesList = new ArrayList<>();
+        listAdapter = new ListAdapter(moviesList, setOnItemClickCallback());
+
         recyclerView = view.findViewById(R.id.recycler_list_detailed);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        list = new ArrayList<>();
-        listAdapter = new ListAdapter(list, setOnItemClickCallback());
         recyclerView.setAdapter(listAdapter);
 
 
@@ -73,7 +77,7 @@ public class ListFragment extends Fragment implements ListAdapter.ItemClickListe
         OnItemClickListener.OnItemClickCallback onItemClickCallback = new OnItemClickListener.OnItemClickCallback() {
             @Override
             public void onItemClicked(View view, int position) {
-                BasePojo.Result itemClicked = list.get(position);
+                BasePojo.Result itemClicked = moviesList.get(position);
                 Bundle bundle = new Bundle();
                 bundle.putString("title", itemClicked.getOriginalTitle());
                 bundle.putString("overview", itemClicked.getOverview());
@@ -106,10 +110,10 @@ public class ListFragment extends Fragment implements ListAdapter.ItemClickListe
             @Override
             public void onResponse(Call<BasePojo> call, Response<BasePojo> response) {
                 BasePojo basePojo = response.body();
-                list.addAll(basePojo.getResults());
+                moviesList.addAll(basePojo.getResults());
                 recyclerView.getAdapter().notifyDataSetChanged();
                 for (BasePojo.Result result : basePojo.getResults()) {
-                    Log.d("tag", "Movie list " + result.getTitle());
+                    Log.d("tag", "Movie list111 " + result.getTitle());
                 }
             }
 
@@ -126,10 +130,10 @@ public class ListFragment extends Fragment implements ListAdapter.ItemClickListe
             @Override
             public void onResponse(Call<BasePojo> call, Response<BasePojo> response) {
                 BasePojo basePojo = response.body();
-                list.addAll(basePojo.getResults());
+                moviesList.addAll(basePojo.getResults());
                 recyclerView.getAdapter().notifyDataSetChanged();
                 for (BasePojo.Result result : basePojo.getResults()) {
-                    Log.d("TAGzz", "Movie list " + result.getTitle());
+                    Log.d("TAGzz", "Movie moviesList " + result.getTitle());
                 }
 
             }
