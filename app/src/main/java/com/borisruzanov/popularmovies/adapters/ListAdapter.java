@@ -21,12 +21,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
      * General
      */
     private List<BasePojo.Result> resultList;
-
-    /**
-     * Garbage
-     */
     private ItemClickListener mClickListener;
-
     OnItemClickListener.OnItemClickCallback onItemClickCallback;
 
 

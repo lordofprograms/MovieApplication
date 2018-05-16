@@ -34,9 +34,7 @@ public class ListFragment extends Fragment implements ListAdapter.ItemClickListe
     View view;
     Toolbar toolbar;
     List<BasePojo.Result> moviesList;
-ListAdapter listAdapter;
-
-
+    ListAdapter listAdapter;
 
 
     public ListFragment() {
@@ -60,7 +58,7 @@ ListAdapter listAdapter;
 
 
         toolbar = (Toolbar) view.findViewById(R.id.main_toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
         sortByRating();
 
@@ -84,6 +82,7 @@ ListAdapter listAdapter;
                 bundle.putString("release_date", itemClicked.getReleaseDate());
                 bundle.putString("vote_average", itemClicked.getVoteAverage().toString());
                 bundle.putString("poster_path", itemClicked.getPosterPath());
+                bundle.putString("id", itemClicked.getId().toString());
                 DetailedFragment detailedFragment = new DetailedFragment();
                 detailedFragment.setArguments(bundle);
                 FragmentManager manager = getActivity().getSupportFragmentManager();
@@ -105,7 +104,7 @@ ListAdapter listAdapter;
 
     }
 
-    public void sortByRating(){
+    public void sortByRating() {
         RetrofitClient.getApiService().getPhotosList(getString(R.string.api_key)).enqueue(new Callback<BasePojo>() {
             @Override
             public void onResponse(Call<BasePojo> call, Response<BasePojo> response) {
@@ -145,7 +144,6 @@ ListAdapter listAdapter;
             }
         });
     }
-
 
 
 }

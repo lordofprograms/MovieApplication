@@ -1,8 +1,12 @@
 package com.borisruzanov.popularmovies;
 
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,7 +22,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.borisruzanov.popularmovies.adapters.ReviewsAdapter;
+import com.borisruzanov.popularmovies.adapters.TrailerAdapter;
 import com.borisruzanov.popularmovies.api.RetrofitClient;
+import com.borisruzanov.popularmovies.model.BasePojo;
 import com.borisruzanov.popularmovies.model.ReviewModel;
 import com.borisruzanov.popularmovies.model.TrailerModel;
 import com.squareup.picasso.Picasso;
@@ -31,13 +37,26 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class DetailedFragment extends Fragment {
+    /**
+     * General
+     */
     View view;
     Toolbar toolbar;
-    ArrayList<TrailerModel> trailerList;
-    RecyclerView recyclerReviews;
 
+    /**
+     * Reviews
+     */
+    RecyclerView recyclerReviews;
     List<ReviewModel.Result> reviewList;
     ReviewsAdapter reviewAdapter;
+
+    /**
+     * Trailer
+     */
+    RecyclerView recyclerTrailers;
+    List<TrailerModel.Result> trailerList;
+    TrailerAdapter trailerAdapter;
+
 
 
 
@@ -60,6 +79,10 @@ public class DetailedFragment extends Fragment {
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(getArguments().getString("title"));
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        /**
+         * Reviews Recycler
+         */
         recyclerReviews = view.findViewById(R.id.reviewsRecyclerView);
 //        recyclerReviews.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         recyclerReviews.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -67,6 +90,14 @@ public class DetailedFragment extends Fragment {
         reviewAdapter = new ReviewsAdapter(reviewList);
         recyclerReviews.setAdapter(reviewAdapter);
 
+        /**
+         * Trailer Recycler
+         */
+        recyclerTrailers = view.findViewById(R.id.trailersRecyclerView);
+        recyclerTrailers.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        trailerList  = new ArrayList<>();
+        trailerAdapter = new TrailerAdapter(trailerList, setOnItemClickCallback());
+        recyclerTrailers.setAdapter(trailerAdapter);
 
         /**
          * Setting data
@@ -84,7 +115,12 @@ public class DetailedFragment extends Fragment {
                 .load(getArguments().getString("poster_path"))
                 .into(imgPoster);
 
+        /**
+         * Getting data for Revies and Trailers
+         */
         getReviewsData();
+        getTrailersData();
+
         return view;
     }
 
@@ -97,7 +133,10 @@ public class DetailedFragment extends Fragment {
     public void getReviewsData(){
 
 
-        RetrofitClient.getApiService().loadReviews("299536",getString(R.string.api_key)).enqueue(new Callback<ReviewModel>() {
+        RetrofitClient
+                .getApiService()
+                .loadReviews(getArguments().getString("id"),getString(R.string.api_key))
+                .enqueue(new Callback<ReviewModel>() {
             @Override
             public void onResponse(Call<ReviewModel> call, Response<ReviewModel> response) {
                 ReviewModel reviewModel = response.body();
@@ -106,16 +145,6 @@ public class DetailedFragment extends Fragment {
                 for (ReviewModel.Result result : reviewModel.getResults()) {
                     Log.d("tag", "Movie list111 " + result.getContent());
                 }
-//                reviewList.addAll(reviewModel.());
-//                recyclerReviews.getAdapter().notifyDataSetChanged();
-//                for (int i = 0; i < response.body().results.size(); i++) {
-//                    reviewList.add(response.body().results.get(i));
-//                }
-//                reviewAdapter.notifyDataSetChanged();
-//                if (reviewList.isEmpty()) {
-//                    reviewsRecyclerView.setVisibility(View.INVISIBLE);
-//                    noReviewView.setVisibility(View.VISIBLE);
-//                }
             }
 
             @Override
@@ -125,4 +154,38 @@ public class DetailedFragment extends Fragment {
         });
     }
 
+    public void getTrailersData(){
+        RetrofitClient.
+                getApiService()
+                .loadTrailers(getArguments().getString("id"),getString(R.string.api_key))
+                .enqueue(new Callback<TrailerModel>() {
+            @Override
+            public void onResponse(Call<TrailerModel> call, Response<TrailerModel> response) {
+                TrailerModel trailerModel = response.body();
+                if (trailerModel != null){
+                    trailerList.addAll(trailerModel.getResults());
+                    recyclerTrailers.getAdapter().notifyDataSetChanged();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<TrailerModel> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private OnItemClickListener.OnItemClickCallback setOnItemClickCallback() {
+        OnItemClickListener.OnItemClickCallback onItemClickCallback = new OnItemClickListener.OnItemClickCallback() {
+            @Override
+            public void onItemClicked(View view, int position) {
+                String url = "https://www.youtube.com/watch?v=".concat(trailerList.get(position).getKey());
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);            }
+
+        };
+        return onItemClickCallback;
+    }
 }
