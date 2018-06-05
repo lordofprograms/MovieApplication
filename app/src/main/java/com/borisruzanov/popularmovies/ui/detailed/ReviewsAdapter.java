@@ -1,17 +1,14 @@
-package com.borisruzanov.popularmovies.adapters;
+package com.borisruzanov.popularmovies.ui.detailed;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.borisruzanov.popularmovies.R;
-import com.borisruzanov.popularmovies.model.ReviewModel;
+import com.borisruzanov.popularmovies.entity.ReviewModel;
 
 import java.util.ArrayList;
 import java.util.List;

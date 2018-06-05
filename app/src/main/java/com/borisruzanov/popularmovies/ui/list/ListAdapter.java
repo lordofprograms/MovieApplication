@@ -1,4 +1,4 @@
-package com.borisruzanov.popularmovies.adapters;
+package com.borisruzanov.popularmovies.ui.list;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -10,7 +10,7 @@ import android.widget.ImageView;
 
 import com.borisruzanov.popularmovies.OnItemClickListener;
 import com.borisruzanov.popularmovies.R;
-import com.borisruzanov.popularmovies.model.BasePojo;
+import com.borisruzanov.popularmovies.entity.BasePojo;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -21,6 +21,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
      * General
      */
     private List<BasePojo.Result> resultList;
+
     private ItemClickListener mClickListener;
     OnItemClickListener.OnItemClickCallback onItemClickCallback;
 
@@ -66,8 +67,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
             Log.v("Tag", "Item is clicked ");
         }
     }
-
-
 
     public void setClickListener(ItemClickListener itemClickListener) {
         this.mClickListener = itemClickListener;

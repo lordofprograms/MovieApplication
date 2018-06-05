@@ -1,15 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_list"
-    android:tag="fragment_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.borisruzanov.popularmovies.ui.list.ListFragment">
-
+    tools:context=".ui.favouriteList.FavouritesFragment">
     <android.support.v7.widget.Toolbar
-        android:id="@+id/main_list_toolbar"
+        android:id="@+id/main_favourite_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
@@ -18,9 +15,8 @@
     </android.support.v7.widget.Toolbar>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_list_detailed"
-        android:layout_below="@id/main_list_toolbar"
-        android:layout_alignParentStart="true"
+        android:id="@+id/recycler_favourites"
+        android:layout_below="@id/main_favourite_toolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="android.support.v7.widget.GridLayoutManager" >

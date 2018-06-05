@@ -1,8 +1,8 @@
-package com.borisruzanov.popularmovies.api;
+package com.borisruzanov.popularmovies.model.data.api;
 
-import com.borisruzanov.popularmovies.model.BasePojo;
-import com.borisruzanov.popularmovies.model.ReviewModel;
-import com.borisruzanov.popularmovies.model.TrailerModel;
+import com.borisruzanov.popularmovies.entity.BasePojo;
+import com.borisruzanov.popularmovies.entity.ReviewModel;
+import com.borisruzanov.popularmovies.entity.TrailerModel;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

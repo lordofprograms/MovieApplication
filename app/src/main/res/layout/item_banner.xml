@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="com.borisruzanov.popularmovies.MainActivity">
+    tools:context="com.borisruzanov.popularmovies.ui.MainActivity">
 
 <android.support.v7.widget.CardView
     android:layout_width="fill_parent"

@@ -1,4 +1,4 @@
-package com.borisruzanov.popularmovies.adapters;
+package com.borisruzanov.popularmovies.ui.detailed;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -9,7 +9,7 @@ import android.widget.ImageView;
 
 import com.borisruzanov.popularmovies.OnItemClickListener;
 import com.borisruzanov.popularmovies.R;
-import com.borisruzanov.popularmovies.model.TrailerModel;
+import com.borisruzanov.popularmovies.entity.TrailerModel;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

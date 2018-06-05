@@ -4,7 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.borisruzanov.popularmovies.MainActivity">
+    tools:context="com.borisruzanov.popularmovies.ui.MainActivity">
+    <!--<android.support.v7.widget.Toolbar-->
+        <!--android:id="@+id/activity_main_toolbar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="?attr/actionBarSize">-->
+
+    <!--</android.support.v7.widget.Toolbar>-->
+
 
     <FrameLayout android:id="@+id/main_frame_list"
         android:layout_width="match_parent"

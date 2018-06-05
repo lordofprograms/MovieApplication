@@ -5,12 +5,18 @@
     <item
         android:id="@+id/menu_sort"
         android:title=""
-        android:icon="@drawable/ic_sort_black_24dp"
+        android:icon="@drawable/ic_format_list_numbered_black_24dp"
         app:showAsAction="always"/>
 
 
     <item
         android:id="@+id/menu_popular"
+        android:title=""
+        android:icon="@drawable/ic_fiber_new_black_24dp"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/menu_favourite"
         android:title=""
         android:icon="@drawable/ic_star_border_black_24dp"
         app:showAsAction="ifRoom"/>

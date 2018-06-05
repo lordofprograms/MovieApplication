@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:tag="fragment_detailed"
-    tools:context="com.borisruzanov.popularmovies.ListFragment">
+    tools:context="com.borisruzanov.popularmovies.ui.list.ListFragment">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/detailed_toolbar"
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
@@ -93,6 +93,20 @@
                             android:layout_height="wrap_content"
                             android:text="Vote average"
                             android:textSize="@dimen/abc_text_size_large_material" />
+
+                        <Button
+                            android:id="@+id/fr_detailed_btn_favourite"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Favourite"
+                            />
+
+                        <Button
+                            android:id="@+id/fr_detailed_btn_provider"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Provider"
+                            />
                     </LinearLayout>
 
                 </LinearLayout>

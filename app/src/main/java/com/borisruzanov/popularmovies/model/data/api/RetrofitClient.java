@@ -1,9 +1,8 @@
-package com.borisruzanov.popularmovies.api;
+package com.borisruzanov.popularmovies.model.data.api;
 
 import android.util.Log;
 
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
