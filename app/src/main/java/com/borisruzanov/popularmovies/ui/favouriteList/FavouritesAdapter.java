@@ -51,7 +51,7 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Fa
         Log.d("tag", "TITLE " +item.getTitle());
         Log.d("tag", "VOTE " +item.getVote_average());
         Picasso.get()
-                    .load(item.getId())
+                    .load(item.getPoster_path())
                     .into(holder.mImageBanner);
         holder.mImageBanner.setOnClickListener(new OnItemClickListener(position, onItemClickCallback));
     }

@@ -93,22 +93,22 @@ public class FavouritesFragment extends Fragment implements FavouritesAdapter.It
             cursor.moveToFirst();
             while(cursor.moveToNext()) {
                 String id = cursor.getString(cursor.getColumnIndex("id"));
-                Log.d("TAG", "ID - " + id);
+                Log.d("TAG_FRAGMENT", "ID - " + id);
 
                 String posterPath = cursor.getString(cursor.getColumnIndex("poster_path"));
-                Log.d("TAG", "POSTER PATH - " + posterPath);
+                Log.d("TAG_FRAGMENT", "POSTER PATH - " + posterPath);
 
                 String title = cursor.getString(cursor.getColumnIndex("title"));
-                Log.d("TAG", "TITLE - " + title);
+                Log.d("TAG_FRAGMENT", "TITLE - " + title);
 
                 String releaseDate = cursor.getString(cursor.getColumnIndex("release_date"));
-                Log.d("TAG", "RELEASE DATE - " + releaseDate);
+                Log.d("TAG_FRAGMENT", "RELEASE DATE - " + releaseDate);
 
                 String vote = cursor.getString(cursor.getColumnIndex("rating"));
-                Log.d("TAG", "VOTE - " + vote);
+                Log.d("TAG_FRAGMENT", "VOTE - " + vote);
 
                 String overview = cursor.getString(cursor.getColumnIndex("overview"));
-                Log.d("TAG", "OVERVIEW - " + overview);
+                Log.d("TAG_FRAGMENT", "OVERVIEW - " + overview);
 
                 favouritesList.add(new FavouriteModel(id, posterPath, title, releaseDate, vote, overview));
             }

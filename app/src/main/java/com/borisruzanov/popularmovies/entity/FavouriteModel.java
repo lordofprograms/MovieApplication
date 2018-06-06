@@ -9,9 +9,9 @@ public class FavouriteModel {
     private String vote_average;
     private String overview;
 
-    public FavouriteModel(String poster_path, String id, String title, String release_date, String vote_average, String overview) {
-        this.poster_path = poster_path;
+    public FavouriteModel(String id,String poster_path,  String title, String release_date, String vote_average, String overview) {
         this.id = id;
+        this.poster_path = poster_path;
         this.title = title;
         this.release_date = release_date;
         this.vote_average = vote_average;

@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.borisruzanov.popularmovies.R;
 import com.borisruzanov.popularmovies.ui.favouriteList.FavouritesFragment;
@@ -19,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("tagq","main eneter <-----------" );
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ListFragment fragment = new ListFragment().getInstance("sort");

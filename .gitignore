@@ -7,4 +7,4 @@
 /build
 /captures
 .externalNativeBuild
-/app/src/res/values/tech_strings.xml
+/app/src/res/values/system_strings.xml

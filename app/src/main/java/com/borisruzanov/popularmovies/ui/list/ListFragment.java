@@ -100,14 +100,16 @@ public class ListFragment extends Fragment implements ListAdapter.ItemClickListe
     public void checkForPath() {
         if (getArguments().getString("path") != null) {
             path = getArguments().getString("path");
-            if (path.equals("sort")) {
-                listPresenter.sortByPopularity(getString(R.string.api_key));
-            }
-            else if(path.equals("favourite")){
-                openFavouriteFragment();
-            }
-            else {
-                listPresenter.sortByRating(getString(R.string.api_key));
+            switch (path) {
+                case "sort":
+                    listPresenter.sortByPopularity(getString(R.string.api_key));
+                    break;
+                case "favourite":
+                    openFavouriteFragment();
+                    break;
+                default:
+                    listPresenter.sortByRating(getString(R.string.api_key));
+                    break;
             }
         } else {
             listPresenter.sortByPopularity(getString(R.string.api_key));

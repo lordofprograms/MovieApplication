@@ -90,6 +90,8 @@ public class DetailedFragment extends Fragment {
             }
         });
 
+        Log.d("tagoc", "In onCreate");
+
         btnAddProvider = view.findViewById(R.id.fr_detailed_btn_provider);
         btnAddProvider.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,8 +227,7 @@ public class DetailedFragment extends Fragment {
     }
 
     public void getReviewsData() {
-
-
+        Log.d("tagReview", "Current id is " + getArguments().getString("id"));
         RetrofitClient
                 .getApiService()
                 .loadReviews(getArguments().getString("id"), getString(R.string.api_key))
@@ -234,6 +235,7 @@ public class DetailedFragment extends Fragment {
                     @Override
                     public void onResponse(Call<ReviewModel> call, Response<ReviewModel> response) {
                         ReviewModel reviewModel = response.body();
+                        Log.d("tagReview", "Current response " + String.valueOf(reviewModel.getPage()));
                         reviewList.addAll(reviewModel.getResults());
                         recyclerReviews.getAdapter().notifyDataSetChanged();
                         for (ReviewModel.Result result : reviewModel.getResults()) {
