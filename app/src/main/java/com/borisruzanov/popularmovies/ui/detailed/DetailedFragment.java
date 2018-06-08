@@ -156,10 +156,10 @@ public class DetailedFragment extends Fragment {
                 .load(getArguments().getString("poster_path"))
                 .into(imgPoster);
 
-//        if (savedInstanceState != null) {
-//            stateValue = savedInstanceState.getInt(STATE_VALUE_KEY);
-//            // Do something with value if needed
-//        }
+        if (savedInstanceState != null) {
+            stateValue = String.valueOf(savedInstanceState.getInt(Contract.STATE_KEY));
+            // Do something with value if needed
+        }
 
         /**
          * Getting data for Revies and Trailers
