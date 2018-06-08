@@ -1,6 +1,8 @@
 package com.borisruzanov.popularmovies.ui;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -8,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.borisruzanov.popularmovies.R;
+import com.borisruzanov.popularmovies.constants.Contract;
+import com.borisruzanov.popularmovies.ui.detailed.DetailedFragment;
 import com.borisruzanov.popularmovies.ui.favouriteList.FavouritesFragment;
 import com.borisruzanov.popularmovies.ui.list.ListFragment;
 
@@ -15,20 +19,85 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    private DetailedFragment detailedFragment;
+    private final String DETAILED_FRAGMENT_TAG = "detailedFragmentTag";
     String path = "";
+    Fragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("tagq","main eneter <-----------" );
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ListFragment fragment = new ListFragment().getInstance("sort");
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.main_frame_list, fragment, "list_fragment_tag");
-        fragmentTransaction.commit();
+
+        if (savedInstanceState != null) {
+
+            fragment = getSupportFragmentManager().findFragmentByTag("list_fragment_tag");
+
+            if (fragment instanceof FavouritesFragment) {
+                fragmentTransaction.add(R.id.main_frame_list,
+                        new FavouritesFragment().getInstance("favourite"), "list_fragment_tag");
+                fragmentTransaction.commit();
+            } else if (fragment instanceof DetailedFragment) {
+                fragmentTransaction.add(R.id.main_frame_list,
+                        new DetailedFragment(), "list_fragment_tag");
+                fragmentTransaction.commit();
+            } else {
+                fragmentTransaction.add(R.id.main_frame_list,
+                        new ListFragment().getInstance("sort"), "list_fragment_tag");
+                fragmentTransaction.commit();
+            }
+
+        }
+
+        else {
+            fragmentTransaction.add(R.id.main_frame_list,
+                    new ListFragment().getInstance("sort"), "list_fragment_tag");
+            fragmentTransaction.commit();
+
+        }
+
+
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        /*FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+
+        if(outState != null && outState.getString(Contract.STATE_KEY) != null) {
+            switch (outState.getString(Contract.STATE_KEY)) {
+
+                case "popular":
+                    fragmentTransaction.replace(R.id.main_frame_list, new ListFragment().getInstance("popular"));
+                    fragmentTransaction.commit();
+                    break;
+                case "sort":
+                    fragmentTransaction.replace(R.id.main_frame_list, new ListFragment().getInstance("sort"));
+                    fragmentTransaction.commit();
+                    break;
+                case "favourite":
+                    fragmentTransaction.replace(R.id.main_frame_list, new FavouritesFragment().getInstance("favourite"));
+                    fragmentTransaction.commit();
+                    break;
+                case "detailed":
+                    fragmentTransaction.replace(R.id.main_frame_list, new DetailedFragment());
+                    fragmentTransaction.commit();
+                    break;
+            }
+        }
+        else {
+            fragmentTransaction.add(R.id.main_frame_list, new ListFragment().getInstance("sort"));
+            //new Handler().post( () -> fragmentTransaction.commit());
+
+        }*/
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -46,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Checking fragments and sending us on previous fragment
+     *
      * @param fragmentManager - we can use method to get all current open fragments in back stack
      */
     private void goToPreviousFragment(FragmentManager fragmentManager) {

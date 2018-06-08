@@ -2,6 +2,7 @@ package com.borisruzanov.popularmovies.ui.list;
 
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -19,6 +20,7 @@ import android.view.ViewGroup;
 
 import com.borisruzanov.popularmovies.OnItemClickListener;
 import com.borisruzanov.popularmovies.R;
+import com.borisruzanov.popularmovies.constants.Contract;
 import com.borisruzanov.popularmovies.model.interactor.list.ListInteractor;
 import com.borisruzanov.popularmovies.model.repository.list.ListRepository;
 import com.borisruzanov.popularmovies.presentation.list.ListPresenter;
@@ -50,9 +52,17 @@ public class ListFragment extends Fragment implements ListAdapter.ItemClickListe
     ListPresenter listPresenter;
     String path = "sort";
 
+    private String stateValue = "list";
+
+
     public ListFragment() {
     }
 
+    /**
+     * Helping with showing needed list depends on got parameter
+     * @param path - sort / popular / favourite
+     * @return - chosen fragment with chosen path
+     */
     public ListFragment getInstance(String path) {
         ListFragment fragment = new ListFragment();
         Bundle args = new Bundle();
@@ -71,7 +81,10 @@ public class ListFragment extends Fragment implements ListAdapter.ItemClickListe
         Log.d("tag", "INSIDE LIST FRAGMETN");
 
         view = inflater.inflate(R.layout.fragment_list, container, false);
-        listPresenter = new ListPresenter(this, new ListInteractor(new ListRepository()));
+
+        setRetainInstance(true);
+
+        listPresenter = new ListPresenter(this);
 
         favouritesFragment = new FavouritesFragment().getInstance("");
 
@@ -102,17 +115,17 @@ public class ListFragment extends Fragment implements ListAdapter.ItemClickListe
             path = getArguments().getString("path");
             switch (path) {
                 case "sort":
-                    listPresenter.sortByPopularity(getString(R.string.api_key));
+                    listPresenter.sortByPopularity();
                     break;
                 case "favourite":
                     openFavouriteFragment();
                     break;
                 default:
-                    listPresenter.sortByRating(getString(R.string.api_key));
+                    listPresenter.sortByRating();
                     break;
             }
         } else {
-            listPresenter.sortByPopularity(getString(R.string.api_key));
+            listPresenter.sortByPopularity();
         }
     }
 
@@ -135,7 +148,7 @@ public class ListFragment extends Fragment implements ListAdapter.ItemClickListe
                 FragmentManager manager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = manager.beginTransaction();
                 transaction.addToBackStack(null);
-                transaction.replace(R.id.main_frame_list, detailedFragment);
+                transaction.replace(R.id.main_frame_list, detailedFragment, "detailed_fragment_tag");
                 transaction.commit();
             }
         };
@@ -158,12 +171,12 @@ public class ListFragment extends Fragment implements ListAdapter.ItemClickListe
         switch (item.getItemId()) {
             case R.id.menu_sort:
                 Log.d("tag", "----------inside rating");
-                listPresenter.sortByPopularity(getString(R.string.api_key));
+                listPresenter.sortByPopularity();
                 path = "sort";
                 break;
             case R.id.menu_popular:
                 Log.d("tag", "----------inside popular");
-                listPresenter.sortByRating(getString(R.string.api_key));
+                listPresenter.sortByRating();
                 path = "popular";
                 break;
             case R.id.menu_favourite:
@@ -176,7 +189,7 @@ public class ListFragment extends Fragment implements ListAdapter.ItemClickListe
     public void openFavouriteFragment(){
         FragmentManager manager = getActivity().getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.main_frame_list, favouritesFragment);
+        transaction.replace(R.id.main_frame_list, favouritesFragment, "favourite_fragment_tag");
         transaction.commit();
     }
 
@@ -246,4 +259,10 @@ public class ListFragment extends Fragment implements ListAdapter.ItemClickListe
     }
 
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Bundle bundle = new Bundle();
+        bundle.putString(Contract.STATE_KEY, path);
+    }
 }

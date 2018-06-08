@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
@@ -53,6 +54,7 @@ public class DetailedFragment extends Fragment {
     Button btnAddProvider;
     DetailedFragment detailedFragment;
     String path = "";
+    private String stateValue = "detailed";
 
     /**
      * Reviews
@@ -67,6 +69,7 @@ public class DetailedFragment extends Fragment {
     RecyclerView recyclerTrailers;
     List<TrailerModel.Result> trailerList;
     TrailerAdapter trailerAdapter;
+
 
     /**
      * Database
@@ -153,6 +156,11 @@ public class DetailedFragment extends Fragment {
                 .load(getArguments().getString("poster_path"))
                 .into(imgPoster);
 
+//        if (savedInstanceState != null) {
+//            stateValue = savedInstanceState.getInt(STATE_VALUE_KEY);
+//            // Do something with value if needed
+//        }
+
         /**
          * Getting data for Revies and Trailers
          */
@@ -161,6 +169,14 @@ public class DetailedFragment extends Fragment {
 
         return view;
     }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Bundle bundle = new Bundle();
+        bundle.putString(Contract.STATE_KEY, stateValue);
+    }
+
     private void addMovieInFavourites() {
         ContentValues contentValues = new ContentValues();
         contentValues.put(Contract.TableInfo.COLUMN_ID, getArguments().getString("id"));
@@ -172,6 +188,7 @@ public class DetailedFragment extends Fragment {
         mDb.insert(Contract.TableInfo.TABLE_NAME, null, contentValues);
         Log.d("tag", "CV include " + contentValues.toString());
     }
+
     private void addMovieInFavouritesByProvider() {
         ContentValues contentValues = new ContentValues();
         contentValues.put(Contract.TableInfo.COLUMN_ID, getArguments().getString("id"));
@@ -203,7 +220,6 @@ public class DetailedFragment extends Fragment {
     }
 
 
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 //        menu.findItem(R.id.menu_popular).setVisible(false);
@@ -215,7 +231,7 @@ public class DetailedFragment extends Fragment {
         Log.d("tag", "Menu is clicked");
 
         //if (getArguments().getString("path") != null) {
-            path = getArguments().getString("path");
+        path = getArguments().getString("path");
         //}
         Fragment fragment = new com.borisruzanov.popularmovies.ui.list.ListFragment().getInstance(path);
         if (item.getItemId() == android.R.id.home) {

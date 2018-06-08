@@ -4,6 +4,7 @@ package com.borisruzanov.popularmovies.ui.favouriteList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -49,10 +50,10 @@ public class FavouritesFragment extends Fragment implements FavouritesAdapter.It
     /**
      * DB
      */
-    private SQLiteDatabase mDb;
     FavouritesDbHelper favouritesDbHelper;
     Cursor cursor;
-    Cursor info;
+
+    private String stateValue = "favourite";
 
     public FavouritesFragment() {
         // Required empty public constructor
@@ -82,37 +83,34 @@ public class FavouritesFragment extends Fragment implements FavouritesAdapter.It
          * DB
          */
         favouritesDbHelper = new FavouritesDbHelper(getActivity());
-        mDb = favouritesDbHelper.getWritableDatabase();
 
 
         cursor = getDataForListFromContentProvider();
-//            cursor.moveToFirst();
-            favouritesList = new ArrayList<>();
+        favouritesList = new ArrayList<>();
 
+        cursor.moveToFirst();
+        while (cursor.moveToNext()) {
+            String id = cursor.getString(cursor.getColumnIndex("id"));
+            Log.d("TAG_FRAGMENT", "ID - " + id);
 
-            cursor.moveToFirst();
-            while(cursor.moveToNext()) {
-                String id = cursor.getString(cursor.getColumnIndex("id"));
-                Log.d("TAG_FRAGMENT", "ID - " + id);
+            String posterPath = cursor.getString(cursor.getColumnIndex("poster_path"));
+            Log.d("TAG_FRAGMENT", "POSTER PATH - " + posterPath);
 
-                String posterPath = cursor.getString(cursor.getColumnIndex("poster_path"));
-                Log.d("TAG_FRAGMENT", "POSTER PATH - " + posterPath);
+            String title = cursor.getString(cursor.getColumnIndex("title"));
+            Log.d("TAG_FRAGMENT", "TITLE - " + title);
 
-                String title = cursor.getString(cursor.getColumnIndex("title"));
-                Log.d("TAG_FRAGMENT", "TITLE - " + title);
+            String releaseDate = cursor.getString(cursor.getColumnIndex("release_date"));
+            Log.d("TAG_FRAGMENT", "RELEASE DATE - " + releaseDate);
 
-                String releaseDate = cursor.getString(cursor.getColumnIndex("release_date"));
-                Log.d("TAG_FRAGMENT", "RELEASE DATE - " + releaseDate);
+            String vote = cursor.getString(cursor.getColumnIndex("rating"));
+            Log.d("TAG_FRAGMENT", "VOTE - " + vote);
 
-                String vote = cursor.getString(cursor.getColumnIndex("rating"));
-                Log.d("TAG_FRAGMENT", "VOTE - " + vote);
+            String overview = cursor.getString(cursor.getColumnIndex("overview"));
+            Log.d("TAG_FRAGMENT", "OVERVIEW - " + overview);
 
-                String overview = cursor.getString(cursor.getColumnIndex("overview"));
-                Log.d("TAG_FRAGMENT", "OVERVIEW - " + overview);
-
-                favouritesList.add(new FavouriteModel(id, posterPath, title, releaseDate, vote, overview));
-            }
-            cursor.close();
+            favouritesList.add(new FavouriteModel(id, posterPath, title, releaseDate, vote, overview));
+        }
+        cursor.close();
 
 //        for (FavouriteModel result : favouritesList) {
 //            Log.d("TAG", "Title from moviesList " + result.getTitle());
@@ -120,53 +118,24 @@ public class FavouritesFragment extends Fragment implements FavouritesAdapter.It
 //        }
 
 
-
-        String[] projection = new String[]{
-                Contract.TableInfo.COLUMN_ID,
-                Contract.TableInfo.COLUMN_TITLE,
-                Contract.TableInfo.COLUMN_RELEASE_DATE,
-                Contract.TableInfo.COLUMN_RATING,
-                Contract.TableInfo.COLUMN_OVERVIEW,
-                Contract.TableInfo.COLUMN_POSTER_PATH
-        };
+//        String[] projection = new String[]{
+//                Contract.TableInfo.COLUMN_ID,
+//                Contract.TableInfo.COLUMN_TITLE,
+//                Contract.TableInfo.COLUMN_RELEASE_DATE,
+//                Contract.TableInfo.COLUMN_RATING,
+//                Contract.TableInfo.COLUMN_OVERVIEW,
+//                Contract.TableInfo.COLUMN_POSTER_PATH
+//        };
 
         /**
          * Первый этап - взяли данные
          */
-        info = getNeededFavouriteCursor(projection);
 
         favouritesAdapter = new FavouritesAdapter(favouritesList, setOnItemClickCallback());
         recyclerView = view.findViewById(R.id.recycler_favourites);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         recyclerView.setAdapter(favouritesAdapter);
         return view;
-    }
-
-    /**
-     * DB
-     */
-    private Cursor getFavouriteCursor() {
-        return mDb.query(
-                Contract.TableInfo.TABLE_NAME,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-    }
-
-    private Cursor getNeededFavouriteCursor(String[] projection) {
-        return mDb.query(
-                Contract.TableInfo.TABLE_NAME,
-                projection,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
     }
 
     private OnItemClickListener.OnItemClickCallback setOnItemClickCallback() {
@@ -201,15 +170,19 @@ public class FavouritesFragment extends Fragment implements FavouritesAdapter.It
     public void onItemClick(View view, int position) {
     }
 
-    public Cursor getDataForListFromContentProvider(){
+    /**
+     * DB
+     */
+
+    public Cursor getDataForListFromContentProvider() {
         Log.v("tag", "===============>>>>>>>> inside getDataForListFromContentProvider");
         try {
-                return getContext().getContentResolver().query(ProviderContract.TableEntry.CONTENT_URI,
-                        null,
-                        null,
-                        null,
-                        null);
-        }catch (Exception e){
+            return getContext().getContentResolver().query(ProviderContract.TableEntry.CONTENT_URI,
+                    null,
+                    null,
+                    null,
+                    null);
+        } catch (Exception e) {
             Log.e("tag", "Failed while loading data");
         }
         return null;
@@ -223,17 +196,24 @@ public class FavouritesFragment extends Fragment implements FavouritesAdapter.It
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Bundle bundle = new Bundle();
+        bundle.putString(Contract.STATE_KEY, stateValue);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         FragmentManager manager = getActivity().getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         switch (item.getItemId()) {
             case R.id.menu_sort:
-                transaction.replace(R.id.main_frame_list, listFragment.getInstance("sort"));
+                transaction.replace(R.id.main_frame_list, listFragment.getInstance("sort"), "list_fragment_tag");
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
             case R.id.menu_popular:
-                transaction.replace(R.id.main_frame_list, listFragment.getInstance("popular"));
+                transaction.replace(R.id.main_frame_list, listFragment.getInstance("popular"), "list_fragment_tag");
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;

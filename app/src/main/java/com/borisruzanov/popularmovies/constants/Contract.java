@@ -3,6 +3,8 @@ package com.borisruzanov.popularmovies.constants;
 import android.provider.BaseColumns;
 
 public class Contract {
+    public static final String STATE_KEY = "stateDetailed";
+
     private Contract() {
     }
 

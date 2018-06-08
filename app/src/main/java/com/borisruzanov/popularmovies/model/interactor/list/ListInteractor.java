@@ -11,12 +11,12 @@ public class ListInteractor {
         this.listRepository = listRepository;
     }
 
-    public void sortByPopularity(String key, ListCallback listCallback){
-        listRepository.sortByPopularity(key, listCallback);
+    public void sortByPopularity(ListCallback listCallback){
+        listRepository.sortByPopularity(listCallback);
     }
 
-    public void sortByRating(String key, ListCallback listCallback){
-        listRepository.sortByRating(key, listCallback);
+    public void sortByRating(ListCallback listCallback){
+        listRepository.sortByRating(listCallback);
     }
 
 }

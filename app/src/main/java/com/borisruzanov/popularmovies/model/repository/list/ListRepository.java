@@ -2,9 +2,10 @@ package com.borisruzanov.popularmovies.model.repository.list;
 
 import android.util.Log;
 
+import com.borisruzanov.popularmovies.R;
 import com.borisruzanov.popularmovies.entity.BasePojo;
 import com.borisruzanov.popularmovies.model.data.api.ApiService;
-import com.borisruzanov.popularmovies.model.data.api.RetrofitClient;
+import com.borisruzanov.popularmovies.model.system.ResourceManager;
 import com.borisruzanov.popularmovies.ui.list.ListCallback;
 
 import java.util.List;
@@ -15,17 +16,21 @@ import retrofit2.Response;
 
 public class ListRepository {
 
-    ApiService apiService = RetrofitClient.getApiService();
+    ApiService apiService;
+    ResourceManager resourceManager;
 
+    public ListRepository(ApiService apiService, ResourceManager resourceManager) {
+        this.apiService = apiService;
+        this.resourceManager = resourceManager;
+    }
 
     /**
      *Getting data from HTTP Request
      * Calling listCallBack which is implemented in presenter
-     * @param key
      * @param listCallback
      */
-    public void sortByPopularity(String key, ListCallback listCallback) {
-       apiService.getPopularList(key).enqueue(new Callback<BasePojo>() {
+    public void sortByPopularity(ListCallback listCallback) {
+       apiService.getPopularList(resourceManager.getString(R.string.api_key)).enqueue(new Callback<BasePojo>() {
             @Override
             public void onResponse(Call<BasePojo> call, Response<BasePojo> response) {
                 /*BasePojo basePojo = response.body();
@@ -41,8 +46,8 @@ public class ListRepository {
         });
     }
 
-    public void sortByRating(String key, ListCallback listCallback) {
-        apiService.getPhotosList(key).enqueue(new Callback<BasePojo>() {
+    public void sortByRating(ListCallback listCallback) {
+        apiService.getPhotosList(resourceManager.getString(R.string.api_key)).enqueue(new Callback<BasePojo>() {
             @Override
             public void onResponse(Call<BasePojo> call, Response<BasePojo> response) {
                 /*BasePojo basePojo = response.body();
