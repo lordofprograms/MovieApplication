@@ -55,6 +55,7 @@ public class ListFragment extends MvpAppCompatFragment implements ListAdapter.It
     @InjectPresenter
     ListPresenter listPresenter;
     String path = "sort";
+    String test = "test";
 
     private String stateValue = "list";
 
