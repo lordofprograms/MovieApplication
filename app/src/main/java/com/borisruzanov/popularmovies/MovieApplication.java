@@ -12,6 +12,7 @@ import com.borisruzanov.popularmovies.dagger.modules.RetrofitModule;
 public class MovieApplication extends Application {
 
     public static AppComponent component;
+    public static String path = "sort";
 
     @Override
     public void onCreate() {

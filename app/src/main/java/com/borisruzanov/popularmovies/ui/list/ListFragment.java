@@ -3,6 +3,7 @@ package com.borisruzanov.popularmovies.ui.list;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -18,17 +19,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.arellomobile.mvp.MvpAppCompatFragment;
+import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.borisruzanov.popularmovies.MovieApplication;
 import com.borisruzanov.popularmovies.OnItemClickListener;
 import com.borisruzanov.popularmovies.R;
 import com.borisruzanov.popularmovies.constants.Contract;
-import com.borisruzanov.popularmovies.model.interactor.list.ListInteractor;
-import com.borisruzanov.popularmovies.model.repository.list.ListRepository;
-import com.borisruzanov.popularmovies.presentation.list.ListPresenter;
-import com.borisruzanov.popularmovies.presentation.list.ListView;
-import com.borisruzanov.popularmovies.ui.detailed.DetailedFragment;
-import com.borisruzanov.popularmovies.ui.favouriteList.FavouritesFragment;
 import com.borisruzanov.popularmovies.entity.BasePojo;
 import com.borisruzanov.popularmovies.model.data.api.RetrofitClient;
+import com.borisruzanov.popularmovies.presentation.list.ListPresenter;
+import com.borisruzanov.popularmovies.presentation.list.ListView;
+import com.borisruzanov.popularmovies.ui.MainActivity;
+import com.borisruzanov.popularmovies.ui.detailed.DetailedFragment;
+import com.borisruzanov.popularmovies.ui.favouriteList.FavouritesFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +40,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ListFragment extends Fragment implements ListAdapter.ItemClickListener, ListView {
+public class ListFragment extends MvpAppCompatFragment implements ListAdapter.ItemClickListener, ListView {
 
     /**
      * Needed
@@ -49,6 +52,7 @@ public class ListFragment extends Fragment implements ListAdapter.ItemClickListe
     ListAdapter listAdapter;
     FavouritesFragment favouritesFragment;
 
+    @InjectPresenter
     ListPresenter listPresenter;
     String path = "sort";
 
@@ -64,6 +68,7 @@ public class ListFragment extends Fragment implements ListAdapter.ItemClickListe
      * @return - chosen fragment with chosen path
      */
     public ListFragment getInstance(String path) {
+        Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - getInstance");
         ListFragment fragment = new ListFragment();
         Bundle args = new Bundle();
         args.putString("path", path);
@@ -74,17 +79,13 @@ public class ListFragment extends Fragment implements ListAdapter.ItemClickListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        /**
-         * Main Initialization
-         */
-
-        Log.d("tag", "INSIDE LIST FRAGMETN");
+        Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - onCreateView");
 
         view = inflater.inflate(R.layout.fragment_list, container, false);
 
         setRetainInstance(true);
 
-        listPresenter = new ListPresenter(this);
+        //listPresenter = new ListPresenter();
 
         favouritesFragment = new FavouritesFragment().getInstance("");
 
@@ -100,33 +101,72 @@ public class ListFragment extends Fragment implements ListAdapter.ItemClickListe
         toolbar.inflateMenu(R.menu.menu_main);
         setHasOptionsMenu(true);
 
-        checkForPath();
+
+        //checkForPath();
 
         return view;
     }
 
     @Override
-    public void onItemClick(View view, int position) {
-        Log.v("in on click", "value " + position);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - onActivityCreated");
+
+        openSelectedSection(savedInstanceState);
     }
 
-    public void checkForPath() {
-        if (getArguments().getString("path") != null) {
-            path = getArguments().getString("path");
+    @Override
+    public void onItemClick(View view, int position) {
+    }
+
+    @Override
+    public void openSelectedSection(Bundle savedInstanceState){
+        Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - openSelectedSection");
+
+        if(savedInstanceState != null && savedInstanceState.getString(Contract.STATE_KEY) != null){
+            Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - openSelectedSection - if != null");
+
+            checkForPath(savedInstanceState.getString(Contract.STATE_KEY));
+        }
+        else if (getArguments().getString("path") != null){
+            Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - openSelectedSection - else if path != null");
+
+            checkForPath(getArguments().getString("path"));
+        }
+        else {
+            Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - openSelectedSection - else");
+
+            checkForPath("popular");
+        }
+    }
+
+    @Override
+    public void checkForPath(String path) {
+        /*if (getArguments().getString("path") != null) {
+            path = getArguments().getString("path");*/
             switch (path) {
                 case "sort":
+                    Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - checkForPath -  case sort");
+
                     listPresenter.sortByPopularity();
+                    MovieApplication.path = "sort";
                     break;
                 case "favourite":
+                    Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - checkForPath -  case favourite");
+
                     openFavouriteFragment();
+                    MovieApplication.path = "favourite";
                     break;
                 default:
+                    Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - checkForPath -  default");
+
                     listPresenter.sortByRating();
+                    MovieApplication.path = "popular";
                     break;
             }
-        } else {
+      /*  } else {
             listPresenter.sortByPopularity();
-        }
+        }*/
     }
 
     private OnItemClickListener.OnItemClickCallback setOnItemClickCallback() {
@@ -158,6 +198,8 @@ public class ListFragment extends Fragment implements ListAdapter.ItemClickListe
     @Override
     public void onAttachFragment(Fragment childFragment) {
         super.onAttachFragment(childFragment);
+        Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - onAttachFragment");
+
     }
 
     @Override
@@ -170,79 +212,37 @@ public class ListFragment extends Fragment implements ListAdapter.ItemClickListe
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_sort:
-                Log.d("tag", "----------inside rating");
+                Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - onOptionsItemSelected - case R.id.menu_sort");
                 listPresenter.sortByPopularity();
                 path = "sort";
                 break;
             case R.id.menu_popular:
-                Log.d("tag", "----------inside popular");
+                Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - onOptionsItemSelected - case R.id.menu_popular");
                 listPresenter.sortByRating();
                 path = "popular";
                 break;
             case R.id.menu_favourite:
-                Log.d("tag", "----------inside favourite");
+                Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - onOptionsItemSelected - case R.id.menu_favourite");
                 openFavouriteFragment();
         }
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
     public void openFavouriteFragment(){
+        Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - openFavouriteFragment");
+
         FragmentManager manager = getActivity().getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.replace(R.id.main_frame_list, favouritesFragment, "favourite_fragment_tag");
         transaction.commit();
     }
 
-    public void sortByRating() {
-        RetrofitClient.getApiService().getPhotosList(getString(R.string.api_key)).enqueue(new Callback<BasePojo>() {
-            @Override
-            public void onResponse(Call<BasePojo> call, Response<BasePojo> response) {
-                BasePojo basePojo = response.body();
-                moviesList.addAll(basePojo.getResults());
-                listAdapter = new ListAdapter(moviesList, setOnItemClickCallback());
-                recyclerView.setAdapter(listAdapter);
-                listAdapter.notifyDataSetChanged();
-                for (BasePojo.Result result : basePojo.getResults()) {
-                    Log.d("tag", "Movie list111 " + result.getTitle());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<BasePojo> call, Throwable t) {
-                Log.d("tag", "Response failed" + t.toString());
-
-            }
-        });
-    }
-
-    public void sortByPopularity() {
-        RetrofitClient.getApiService().getPopularList(getString(R.string.api_key)).enqueue(new Callback<BasePojo>() {
-            @Override
-            public void onResponse(Call<BasePojo> call, Response<BasePojo> response) {
-                /**
-                 * Первый этап - взяли данные
-                 */
-                BasePojo basePojo = response.body();
-                moviesList.addAll(basePojo.getResults());
-                listAdapter = new ListAdapter(moviesList, setOnItemClickCallback());
-                recyclerView.setAdapter(listAdapter);
-                listAdapter.notifyDataSetChanged();
-                for (BasePojo.Result result : basePojo.getResults()) {
-                    Log.d("TAG", "Movie moviesList " + result.getTitle());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<BasePojo> call, Throwable t) {
-                Log.d("tag", "Response failed" + t.toString());
-
-            }
-        });
-    }
-
 
     @Override
     public void setData(List<BasePojo.Result> photosList) {
+        Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - setData");
+
         //Create clean list
         //Previous list data was removed
         moviesList = new ArrayList<>();
@@ -261,8 +261,9 @@ public class ListFragment extends Fragment implements ListAdapter.ItemClickListe
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
+        Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - onSaveInstanceState");
+
         super.onSaveInstanceState(outState);
-        Bundle bundle = new Bundle();
-        bundle.putString(Contract.STATE_KEY, path);
+        outState.putString(Contract.STATE_KEY, path);
     }
 }

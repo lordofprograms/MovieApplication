@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.borisruzanov.popularmovies.OnItemClickListener;
 import com.borisruzanov.popularmovies.R;
 import com.borisruzanov.popularmovies.entity.BasePojo;
@@ -32,12 +33,13 @@ import com.borisruzanov.popularmovies.udacity.ProviderContract;
 import com.borisruzanov.popularmovies.ui.list.ListFragment;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FavouritesFragment extends Fragment implements FavouritesAdapter.ItemClickListener {
+public class FavouritesFragment extends MvpAppCompatFragment implements FavouritesAdapter.ItemClickListener {
     View view;
     Toolbar toolbar;
 
@@ -46,6 +48,17 @@ public class FavouritesFragment extends Fragment implements FavouritesAdapter.It
     FavouritesAdapter favouritesAdapter;
     ListFragment listFragment;
 
+    /**
+     * TEST
+     */
+    public static final String IMAGE_ID_LIST = "image_ids";
+    public static final String LIST_INDEX = "list_index";
+    String id ;
+    String posterPath;
+    String title;
+    String releaseDate;
+    String vote;
+    String overview;
 
     /**
      * DB
@@ -88,24 +101,46 @@ public class FavouritesFragment extends Fragment implements FavouritesAdapter.It
         cursor = getDataForListFromContentProvider();
         favouritesList = new ArrayList<>();
 
+        if(savedInstanceState != null) {
+            id = savedInstanceState.getString("id");
+            Log.d("TAG_FRAGMENT", "mID - " + id);
+
+            posterPath = savedInstanceState.getString("poster_path");
+            Log.d("TAG_FRAGMENT", "mPOSTER PATH - " + posterPath);
+
+            title = savedInstanceState.getString("title");
+            Log.d("TAG_FRAGMENT", "mTITLE - " + title);
+
+            releaseDate = savedInstanceState.getString("release_date");
+            Log.d("TAG_FRAGMENT", "mRELEASE DATE - " + releaseDate);
+
+            vote = savedInstanceState.getString("rating");
+            Log.d("TAG_FRAGMENT", "mVOTE - " + vote);
+
+            overview = savedInstanceState.getString("overview");
+            Log.d("TAG_FRAGMENT", "mOVERVIEW - " + overview);
+
+            favouritesList.add(new FavouriteModel(id, posterPath, title, releaseDate, vote, overview));
+        }
+
         cursor.moveToFirst();
         while (cursor.moveToNext()) {
-            String id = cursor.getString(cursor.getColumnIndex("id"));
+            id = cursor.getString(cursor.getColumnIndex("id"));
             Log.d("TAG_FRAGMENT", "ID - " + id);
 
-            String posterPath = cursor.getString(cursor.getColumnIndex("poster_path"));
+            posterPath = cursor.getString(cursor.getColumnIndex("poster_path"));
             Log.d("TAG_FRAGMENT", "POSTER PATH - " + posterPath);
 
-            String title = cursor.getString(cursor.getColumnIndex("title"));
+            title = cursor.getString(cursor.getColumnIndex("title"));
             Log.d("TAG_FRAGMENT", "TITLE - " + title);
 
-            String releaseDate = cursor.getString(cursor.getColumnIndex("release_date"));
+            releaseDate = cursor.getString(cursor.getColumnIndex("release_date"));
             Log.d("TAG_FRAGMENT", "RELEASE DATE - " + releaseDate);
 
-            String vote = cursor.getString(cursor.getColumnIndex("rating"));
+            vote = cursor.getString(cursor.getColumnIndex("rating"));
             Log.d("TAG_FRAGMENT", "VOTE - " + vote);
 
-            String overview = cursor.getString(cursor.getColumnIndex("overview"));
+            overview = cursor.getString(cursor.getColumnIndex("overview"));
             Log.d("TAG_FRAGMENT", "OVERVIEW - " + overview);
 
             favouritesList.add(new FavouriteModel(id, posterPath, title, releaseDate, vote, overview));
@@ -170,6 +205,8 @@ public class FavouritesFragment extends Fragment implements FavouritesAdapter.It
     public void onItemClick(View view, int position) {
     }
 
+
+
     /**
      * DB
      */
@@ -198,8 +235,15 @@ public class FavouritesFragment extends Fragment implements FavouritesAdapter.It
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        Bundle bundle = new Bundle();
-        bundle.putString(Contract.STATE_KEY, stateValue);
+        Log.d("tag", "INSIDE SAVED INSTANCE");
+
+        outState.putString(Contract.STATE_KEY, "favourite");
+        outState.putString("id", id);
+        outState.putString("title", title);
+        outState.putString("release_date", releaseDate);
+        outState.putString("rating", vote);
+        outState.putString("overview", overview);
+        Log.d("tag", "Bundle is " +outState.toString());
     }
 
     @Override
@@ -221,6 +265,8 @@ public class FavouritesFragment extends Fragment implements FavouritesAdapter.It
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 }
 
 //       if (cursor.moveToFirst()){

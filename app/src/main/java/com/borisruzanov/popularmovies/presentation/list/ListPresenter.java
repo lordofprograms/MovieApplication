@@ -1,5 +1,7 @@
 package com.borisruzanov.popularmovies.presentation.list;
 
+import com.arellomobile.mvp.InjectViewState;
+import com.arellomobile.mvp.MvpPresenter;
 import com.borisruzanov.popularmovies.MovieApplication;
 import com.borisruzanov.popularmovies.dagger.components.DaggerListComponent;
 import com.borisruzanov.popularmovies.dagger.modules.ListModule;
@@ -11,13 +13,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class ListPresenter {
+@InjectViewState
+public class ListPresenter extends MvpPresenter<ListView> {
 
-    ListView view;
     @Inject ListInteractor listInteractor;
 
-    public ListPresenter(ListView view) {
-        this.view = view;
+    public ListPresenter() {
 
         DaggerListComponent.builder()
                 .appComponent(MovieApplication.component)
@@ -34,7 +35,7 @@ public class ListPresenter {
         listInteractor.sortByPopularity(new ListCallback() {
             @Override
             public void setPhotosList(List<BasePojo.Result> photosList) {
-                view.setData(photosList);
+                getViewState().setData(photosList);
             }
         });
     }
@@ -47,7 +48,7 @@ public class ListPresenter {
         listInteractor.sortByRating(new ListCallback() {
             @Override
             public void setPhotosList(List<BasePojo.Result> photosList) {
-                view.setData(photosList);
+                getViewState().setData(photosList);
             }
         });
     }

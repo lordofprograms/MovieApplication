@@ -1,106 +1,122 @@
 package com.borisruzanov.popularmovies.ui;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.arellomobile.mvp.MvpAppCompatActivity;
+import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.borisruzanov.popularmovies.MovieApplication;
 import com.borisruzanov.popularmovies.R;
 import com.borisruzanov.popularmovies.constants.Contract;
+import com.borisruzanov.popularmovies.presentation.main.MainPresenter;
+import com.borisruzanov.popularmovies.presentation.main.MainView;
 import com.borisruzanov.popularmovies.ui.detailed.DetailedFragment;
 import com.borisruzanov.popularmovies.ui.favouriteList.FavouritesFragment;
 import com.borisruzanov.popularmovies.ui.list.ListFragment;
 
-import java.util.List;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends MvpAppCompatActivity implements MainView {
 
     private DetailedFragment detailedFragment;
     private final String DETAILED_FRAGMENT_TAG = "detailedFragmentTag";
-    String path = "";
+    //String path = "";
     Fragment fragment;
+
+
+    @InjectPresenter
+    MainPresenter mainPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(Contract.TAG_STATE_CHECKING, "MainActivity - OnCreate");
         setContentView(R.layout.activity_main);
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        mainPresenter.openFragment();
+       /* FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        if (savedInstanceState != null) {
-
-            fragment = getSupportFragmentManager().findFragmentByTag("list_fragment_tag");
-
-            if (fragment instanceof FavouritesFragment) {
-                fragmentTransaction.add(R.id.main_frame_list,
-                        new FavouritesFragment().getInstance("favourite"), "list_fragment_tag");
-                fragmentTransaction.commit();
-            } else if (fragment instanceof DetailedFragment) {
-                fragmentTransaction.add(R.id.main_frame_list,
-                        new DetailedFragment(), "list_fragment_tag");
-                fragmentTransaction.commit();
-            } else {
-                fragmentTransaction.add(R.id.main_frame_list,
-                        new ListFragment().getInstance("sort"), "list_fragment_tag");
-                fragmentTransaction.commit();
-            }
-
+        if(savedInstanceState != null && savedInstanceState.getString(Contract.STATE_KEY) != null) {
+            fragmentTransaction.add(R.id.main_frame_list,
+                    new ListFragment().getInstance(savedInstanceState.getString(Contract.STATE_KEY)));
+            fragmentTransaction.commit();
         }
-
         else {
             fragmentTransaction.add(R.id.main_frame_list,
                     new ListFragment().getInstance("sort"), "list_fragment_tag");
             fragmentTransaction.commit();
-
         }
+        Log.d("Rotation", "Rotated or started");*/
+    }
 
-
+    @Override
+    public void openFragment(String path) {
+        Log.d(Contract.TAG_STATE_CHECKING, "MainActivity - openFragment");
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        switch (path) {
+            case "sort": case "popular":
+                Log.d(Contract.TAG_STATE_CHECKING, "MainActivity - switch - case - sort OR popular");
+                fragmentTransaction.replace(R.id.main_frame_list, new ListFragment().getInstance(path));
+                break;
+            case "favourite":
+                Log.d(Contract.TAG_STATE_CHECKING, "MainActivity - switch - case - favourite");
+                fragmentTransaction.replace(R.id.main_frame_list, new FavouritesFragment().getInstance(path));
+                break;
+        }
+        fragmentTransaction.commit();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
+        Log.d(Contract.TAG_STATE_CHECKING, "-------SCREEN ROTATED-------");
+        Log.d(Contract.TAG_STATE_CHECKING, "MainActivity - onSaveInstanceState");
         /*FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
 
-        if(outState != null && outState.getString(Contract.STATE_KEY) != null) {
+        if (outState != null && outState.getString(Contract.STATE_KEY) != null) {
             switch (outState.getString(Contract.STATE_KEY)) {
 
                 case "popular":
+                    Log.d("state_saving", "Inside case Popular");
+
                     fragmentTransaction.replace(R.id.main_frame_list, new ListFragment().getInstance("popular"));
                     fragmentTransaction.commit();
                     break;
                 case "sort":
+                    Log.d("state_saving", "Inside case Sort");
+
                     fragmentTransaction.replace(R.id.main_frame_list, new ListFragment().getInstance("sort"));
                     fragmentTransaction.commit();
                     break;
                 case "favourite":
+                    Log.d("state_saving", "Inside case Favourite");
+
                     fragmentTransaction.replace(R.id.main_frame_list, new FavouritesFragment().getInstance("favourite"));
                     fragmentTransaction.commit();
                     break;
                 case "detailed":
+                    Log.d("state_saving", "Inside case Detailed");
+
                     fragmentTransaction.replace(R.id.main_frame_list, new DetailedFragment());
                     fragmentTransaction.commit();
                     break;
             }
-        }
-        else {
+        } else {
+            Log.d("state_saving", "Inside Else");
+
             fragmentTransaction.add(R.id.main_frame_list, new ListFragment().getInstance("sort"));
             //new Handler().post( () -> fragmentTransaction.commit());
-
         }*/
     }
 
 
     @Override
     public void onBackPressed() {
+        Log.d(Contract.TAG_STATE_CHECKING, "MainActivity - onBackPressed");
+
         FragmentManager fm = getSupportFragmentManager();
         //Checking for number of opened fragments
         if (fm.getBackStackEntryCount() > 0) {
@@ -119,11 +135,13 @@ public class MainActivity extends AppCompatActivity {
      * @param fragmentManager - we can use method to get all current open fragments in back stack
      */
     private void goToPreviousFragment(FragmentManager fragmentManager) {
+        Log.d(Contract.TAG_STATE_CHECKING, "MainActivity - goToPreviousFragment");
+
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         for (Fragment fragment : fragmentManager.getFragments()) {
             if (fragment.getArguments().getString("path") != null) {
-                path = fragment.getArguments().getString("path");
-                switch (path) {
+                MovieApplication.path = fragment.getArguments().getString("path");
+                switch (MovieApplication.path) {
                     case "sort":
                         openFragment(new ListFragment().getInstance("sort"), fragmentTransaction);
                         break;
@@ -141,8 +159,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     private void openFragment(Fragment fragment, FragmentTransaction transaction) {
+        Log.d(Contract.TAG_STATE_CHECKING, "MainActivity - openFragment");
         transaction.replace(R.id.main_frame_list, fragment);
         transaction.commit();
     }
@@ -186,6 +204,34 @@ public class MainActivity extends AppCompatActivity {
 //        }
 //        return super.onOptionsItemSelected(item);
 //    }
+
+
+//        if (savedInstanceState != null) {
+//
+//            fragment = getSupportFragmentManager().findFragmentByTag("list_fragment_tag");
+//
+//            if (fragment instanceof FavouritesFragment) {
+//                fragmentTransaction.add(R.id.main_frame_list,
+//                        new FavouritesFragment().getInstance("favourite"), "list_fragment_tag");
+//                fragmentTransaction.commit();
+//            } else if (fragment instanceof DetailedFragment) {
+//                fragmentTransaction.add(R.id.main_frame_list,
+//                        new DetailedFragment(), "list_fragment_tag");
+//                fragmentTransaction.commit();
+//            } else {
+//                fragmentTransaction.add(R.id.main_frame_list,
+//                        new ListFragment().getInstance("sort"), "list_fragment_tag");
+//                fragmentTransaction.commit();
+//            }
+//
+//        }
+//
+//        else {
+//            fragmentTransaction.add(R.id.main_frame_list,
+//                    new ListFragment().getInstance("sort"), "list_fragment_tag");
+//            fragmentTransaction.commit();
+//        }
+
 
 
 }

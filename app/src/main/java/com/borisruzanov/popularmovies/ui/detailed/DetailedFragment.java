@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.borisruzanov.popularmovies.OnItemClickListener;
 import com.borisruzanov.popularmovies.R;
 import com.borisruzanov.popularmovies.model.data.api.RetrofitClient;
@@ -44,7 +45,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DetailedFragment extends Fragment {
+public class DetailedFragment extends MvpAppCompatFragment {
     /**
      * General
      */
@@ -55,6 +56,13 @@ public class DetailedFragment extends Fragment {
     DetailedFragment detailedFragment;
     String path = "";
     private String stateValue = "detailed";
+
+    /**
+     * Garbage
+     */
+    // Final Strings to store state information about the list of images and list index
+    public static final String IMAGE_ID_LIST = "image_ids";
+    public static final String LIST_INDEX = "list_index";
 
     /**
      * Reviews
@@ -173,8 +181,7 @@ public class DetailedFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        Bundle bundle = new Bundle();
-        bundle.putString(Contract.STATE_KEY, stateValue);
+        outState.putString(Contract.STATE_KEY, stateValue);
     }
 
     private void addMovieInFavourites() {
