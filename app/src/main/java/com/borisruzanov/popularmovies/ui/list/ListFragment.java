@@ -48,20 +48,15 @@ public class ListFragment extends MvpAppCompatFragment implements ListAdapter.It
     RecyclerView recyclerView;
     View view;
     Toolbar toolbar;
-    List<BasePojo.Result> moviesList;
+    List<BasePojo.Result> moviesList = new ArrayList<>();
     ListAdapter listAdapter;
-    FavouritesFragment favouritesFragment;
 
     @InjectPresenter
     ListPresenter listPresenter;
     String path = "sort";
-    String test = "test";
+    //String test = "test";
 
-    private String stateValue = "list";
-
-
-    public ListFragment() {
-    }
+    public ListFragment() {}
 
     /**
      * Helping with showing needed list depends on got parameter
@@ -86,24 +81,15 @@ public class ListFragment extends MvpAppCompatFragment implements ListAdapter.It
 
         setRetainInstance(true);
 
-        //listPresenter = new ListPresenter();
-
-        favouritesFragment = new FavouritesFragment().getInstance("");
-
-        moviesList = new ArrayList<>();
-        listAdapter = new ListAdapter(moviesList, setOnItemClickCallback());
+        listAdapter = new ListAdapter(setOnItemClickCallback());
         recyclerView = view.findViewById(R.id.recycler_list_detailed);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         recyclerView.setAdapter(listAdapter);
 
-
-        toolbar = (Toolbar) view.findViewById(R.id.main_list_toolbar);
+        toolbar = view.findViewById(R.id.main_list_toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         toolbar.inflateMenu(R.menu.menu_main);
         setHasOptionsMenu(true);
-
-
-        //checkForPath();
 
         return view;
     }
@@ -112,62 +98,42 @@ public class ListFragment extends MvpAppCompatFragment implements ListAdapter.It
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - onActivityCreated");
-
         openSelectedSection(savedInstanceState);
     }
 
     @Override
-    public void onItemClick(View view, int position) {
-    }
+    public void onItemClick(View view, int position) {}
 
     @Override
     public void openSelectedSection(Bundle savedInstanceState){
         Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - openSelectedSection");
-
-        if(savedInstanceState != null && savedInstanceState.getString(Contract.STATE_KEY) != null){
-            Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - openSelectedSection - if != null");
-
-            checkForPath(savedInstanceState.getString(Contract.STATE_KEY));
+        if(savedInstanceState != null){
+            Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - not null");
+            Log.d(Contract.TAG_STATE_CHECKING, "Saved instance state is: " +
+                    savedInstanceState.getString(Contract.STATE_KEY));
+            path = savedInstanceState.getString(Contract.STATE_KEY);
         }
-        else if (getArguments().getString("path") != null){
-            Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - openSelectedSection - else if path != null");
-
-            checkForPath(getArguments().getString("path"));
+        else if(getArguments() != null){
+            path = getArguments().getString("path");
         }
-        else {
-            Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - openSelectedSection - else");
-
-            checkForPath("popular");
-        }
+        checkForPath(path);
     }
 
     @Override
     public void checkForPath(String path) {
-        /*if (getArguments().getString("path") != null) {
-            path = getArguments().getString("path");*/
             switch (path) {
                 case "sort":
                     Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - checkForPath -  case sort");
-
                     listPresenter.sortByPopularity();
-                    MovieApplication.path = "sort";
                     break;
                 case "favourite":
                     Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - checkForPath -  case favourite");
-
-                    openFavouriteFragment();
-                    MovieApplication.path = "favourite";
                     break;
-                default:
-                    Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - checkForPath -  default");
-
+                case "popular":
+                    Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - checkForPath -  case popular");
                     listPresenter.sortByRating();
-                    MovieApplication.path = "popular";
                     break;
             }
-      /*  } else {
-            listPresenter.sortByPopularity();
-        }*/
     }
 
     private OnItemClickListener.OnItemClickCallback setOnItemClickCallback() {
@@ -235,7 +201,8 @@ public class ListFragment extends MvpAppCompatFragment implements ListAdapter.It
 
         FragmentManager manager = getActivity().getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.main_frame_list, favouritesFragment, "favourite_fragment_tag");
+        transaction.replace(R.id.main_frame_list, new FavouritesFragment().getInstance("favourite"),
+                "favourite_fragment_tag");
         transaction.commit();
     }
 
@@ -251,9 +218,8 @@ public class ListFragment extends MvpAppCompatFragment implements ListAdapter.It
         //Add all data to created list
         moviesList.addAll(photosList);
 
-        //Creating and setting adapter
-        listAdapter = new ListAdapter(moviesList, setOnItemClickCallback());
-        recyclerView.setAdapter(listAdapter);
+        //Setting list to the adapter
+        listAdapter.setData(photosList);
 
         //Refreshing UI of the recycler with new data
         listAdapter.notifyDataSetChanged();
@@ -263,7 +229,6 @@ public class ListFragment extends MvpAppCompatFragment implements ListAdapter.It
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         Log.d(Contract.TAG_STATE_CHECKING, "ListFragment - onSaveInstanceState");
-
         super.onSaveInstanceState(outState);
         outState.putString(Contract.STATE_KEY, path);
     }

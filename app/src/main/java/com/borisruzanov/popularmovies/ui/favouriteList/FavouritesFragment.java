@@ -25,6 +25,7 @@ import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.borisruzanov.popularmovies.OnItemClickListener;
 import com.borisruzanov.popularmovies.R;
 import com.borisruzanov.popularmovies.entity.BasePojo;
+import com.borisruzanov.popularmovies.ui.MainActivity;
 import com.borisruzanov.popularmovies.ui.detailed.DetailedFragment;
 import com.borisruzanov.popularmovies.constants.Contract;
 import com.borisruzanov.popularmovies.constants.FavouritesDbHelper;
@@ -53,7 +54,7 @@ public class FavouritesFragment extends MvpAppCompatFragment implements Favourit
      */
     public static final String IMAGE_ID_LIST = "image_ids";
     public static final String LIST_INDEX = "list_index";
-    String id ;
+    String id;
     String posterPath;
     String title;
     String releaseDate;
@@ -88,6 +89,7 @@ public class FavouritesFragment extends MvpAppCompatFragment implements Favourit
         toolbar = (Toolbar) view.findViewById(R.id.main_favourite_toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         toolbar.inflateMenu(R.menu.menu_main);
+        setRetainInstance(true);
         setHasOptionsMenu(true);
 
         listFragment = new ListFragment();
@@ -101,7 +103,7 @@ public class FavouritesFragment extends MvpAppCompatFragment implements Favourit
         cursor = getDataForListFromContentProvider();
         favouritesList = new ArrayList<>();
 
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             id = savedInstanceState.getString("id");
             Log.d("TAG_FRAGMENT", "mID - " + id);
 
@@ -206,7 +208,6 @@ public class FavouritesFragment extends MvpAppCompatFragment implements Favourit
     }
 
 
-
     /**
      * DB
      */
@@ -243,7 +244,7 @@ public class FavouritesFragment extends MvpAppCompatFragment implements Favourit
         outState.putString("release_date", releaseDate);
         outState.putString("rating", vote);
         outState.putString("overview", overview);
-        Log.d("tag", "Bundle is " +outState.toString());
+        Log.d("tag", "Bundle is " + outState.toString());
     }
 
     @Override
@@ -253,16 +254,12 @@ public class FavouritesFragment extends MvpAppCompatFragment implements Favourit
         switch (item.getItemId()) {
             case R.id.menu_sort:
                 transaction.replace(R.id.main_frame_list, listFragment.getInstance("sort"), "list_fragment_tag");
-                transaction.addToBackStack(null);
-                transaction.commit();
                 break;
             case R.id.menu_popular:
                 transaction.replace(R.id.main_frame_list, listFragment.getInstance("popular"), "list_fragment_tag");
-                transaction.addToBackStack(null);
-                transaction.commit();
                 break;
-
         }
+        transaction.commit();
         return super.onOptionsItemSelected(item);
     }
 

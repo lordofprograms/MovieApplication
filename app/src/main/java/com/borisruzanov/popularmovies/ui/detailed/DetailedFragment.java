@@ -92,6 +92,7 @@ public class DetailedFragment extends MvpAppCompatFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setRetainInstance(true);
         view = inflater.inflate(R.layout.fragment_detailed, container, false);
         btnAddFavourite = view.findViewById(R.id.fr_detailed_btn_favourite);
         btnAddFavourite.setOnClickListener(new View.OnClickListener() {

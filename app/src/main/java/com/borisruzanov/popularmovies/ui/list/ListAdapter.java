@@ -13,6 +13,7 @@ import com.borisruzanov.popularmovies.R;
 import com.borisruzanov.popularmovies.entity.BasePojo;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder> {
@@ -20,15 +21,18 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
     /**
      * General
      */
-    private List<BasePojo.Result> resultList;
+    private List<BasePojo.Result> resultList = new ArrayList<>();
 
     private ItemClickListener mClickListener;
     OnItemClickListener.OnItemClickCallback onItemClickCallback;
 
 
-    public ListAdapter(List<BasePojo.Result> resultList, OnItemClickListener.OnItemClickCallback onItemClickCallback) {
-        this.resultList = resultList;
+    public ListAdapter(OnItemClickListener.OnItemClickCallback onItemClickCallback) {
         this.onItemClickCallback = onItemClickCallback;
+    }
+
+    public void setData(List<BasePojo.Result> resultList){
+        this.resultList = resultList;
     }
 
     @NonNull

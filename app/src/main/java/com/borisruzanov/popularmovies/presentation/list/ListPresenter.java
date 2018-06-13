@@ -1,5 +1,7 @@
 package com.borisruzanov.popularmovies.presentation.list;
 
+import android.os.Bundle;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.borisruzanov.popularmovies.MovieApplication;

@@ -11,9 +11,4 @@ import com.borisruzanov.popularmovies.ui.MainActivity;
 @InjectViewState
 public class MainPresenter extends MvpPresenter<MainView> {
 
-    public void openFragment(){
-        Log.d(Contract.TAG_STATE_CHECKING, "MainPresenter - openFragment");
-        getViewState().openFragment(MovieApplication.path);
-    }
-
 }
